@@ -1,0 +1,11 @@
+{
+  "name": "@monorepo/using-package",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@monorepo/dependency-package": "*"
+  },
+  "scripts": {
+    "vite:start": "../../node_modules/.bin/vite"
+  }
+}
