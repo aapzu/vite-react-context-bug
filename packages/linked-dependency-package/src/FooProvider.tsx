@@ -6,10 +6,10 @@ import React, {
   PropsWithChildren,
 } from "react";
 
-export const FooContext = createContext(undefined);
+export const FooContext = createContext<{ foo: string | undefined; setFoo: (foo: string) => void } | undefined>(undefined);
 
 export const FooProvider = ({ children }: PropsWithChildren) => {
-  const [foo, setFoo] = useState(undefined);
+  const [foo, setFoo] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     setFoo("bar");

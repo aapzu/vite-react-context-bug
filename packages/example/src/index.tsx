@@ -1,25 +1,41 @@
 import React, { Component, PropsWithChildren } from "react";
 import { createRoot } from "react-dom/client";
+import { ErrorBoundary } from "react-error-boundary";
 
 // doesn't work
-import { FooProvider, useFoo } from "linked-dependency-package-alias";
+import { FooProvider as FooProviderAlias, useFoo as useFooAlias } from "linked-dependency-package-alias";
 
 // works
-// import { FooProvider, useFoo } from "linked-dependency-package";
+import { FooProvider as FooProviderLinked, useFoo as useFooLinked } from "linked-dependency-package";
 
 // works
-// import { FooProvider, useFoo } from "../../linked-dependency-package";
+import { FooContext as FooContextLocal, FooProvider as FooProviderLocal, useFoo as useFooLocal } from "../../linked-dependency-package";
 
-const Foo = () => {
-  const { foo } = useFoo();
+const Consumer = ({ hook }: { hook: typeof useFooLocal }) => {
+  const { foo } = hook();
   return <div>{foo}</div>;
+};
+
+const Example = ({ title, Provider, hook }: { title: string; Provider: typeof FooProviderLocal; hook: typeof useFooLocal }) => {
+  return (
+    <div>
+      <h3>{title}</h3>
+      <ErrorBoundary fallbackRender={({ error }) => <strong style={{ color: "red" }}>{error.message}</strong>}>
+        <Provider>
+          <Consumer hook={hook} />
+        </Provider>
+      </ErrorBoundary>
+    </div>
+  );
 };
 
 const App = () => {
   return (
-    <FooProvider>
-      <Foo />
-    </FooProvider>
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <Example title="ExampleAlias" Provider={FooProviderAlias} hook={useFooAlias} />
+      <Example title="ExampleLinked" Provider={FooProviderLinked} hook={useFooLinked} />
+      <Example title="ExampleLocal" Provider={FooProviderLocal} hook={useFooLocal} />
+    </div>
   );
 };
 
